@@ -1,0 +1,10 @@
+#!/bin/bash
+export MONGO_HOST="localhost"
+export MONGO_USER=""
+export MONGO_PASSWORD=""
+export MONGO_COLLECTION="drift"
+export MONGO_DB="monitoring"
+export RABBITMQ_HOST="localhost"
+export RABBITMQ_QUEUE_NAME="drift_queue"
+export RABBITMQ_USERNAME="guest"
+export RABBITMQ_PASSWORD="guest"
