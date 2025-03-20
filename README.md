@@ -21,3 +21,29 @@ uv run pytest mongodb_tests.py
 uv run pytest --cov=rabbitMQService/ rabbitmq_tests.py
 uv run pytest --cov=mongoDBService/ mongodb_tests.py
 ```
+
+For demo, run the following
+
+```bash
+uv sync
+```
+
+This will create the .venv, then activate it using
+
+```bash
+source .venv/bin/activate
+```
+
+Then you can start the workers using the following command in separate terminal
+
+```bash
+uv run app.py
+```
+
+This will start the worker that will listen to events on queue and will compute drift report and store it in  mongo db based on the signals received.
+
+To simulate an inference event in a separate terminal run
+
+```bash
+uv run event_generator.py
+```
