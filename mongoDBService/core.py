@@ -2,7 +2,7 @@ from __future__ import annotations
 import urllib.parse
 from pymongo import MongoClient
 from abc import ABC, abstractmethod
-from .entities import DriftReport
+from .entities import DriftReportHtml
 from typing_extensions import Self
 from datetime import datetime
 
@@ -12,7 +12,7 @@ class MongoDBInterface(ABC):
     def init_client(self):
         pass
 
-    def insert_drift_report(self):
+    def insert_drift_report_html(self):
         pass
 
     def close_client(self):
@@ -68,7 +68,7 @@ class MongoDBService(MongoDBInterface):
         self.client = MongoClient(conn_string)
         return self
 
-    def insert_drift_report(self, report: DriftReport) -> Self:
+    def insert_drift_report_html(self, report: DriftReportHtml) -> Self:
         self.init_client()
         db = self.client[self.dbname]
         col = db[self.collection]
@@ -86,7 +86,7 @@ class MongoDBService(MongoDBInterface):
         else:
             raise Exception("Client is not initialized, can't be closed")
 
-    def get_drift_reports_by_model_id(self, model_id: str) -> list[DriftReport]:
+    def get_drift_reports_by_model_id(self, model_id: str) -> list[DriftReportHtml]:
         self.init_client()
         db = self.client[self.dbname]
         col = db[self.collection]
@@ -94,7 +94,7 @@ class MongoDBService(MongoDBInterface):
         try:
             results = col.find({"model_id": model_id})
             for result in results:
-                reports.append(DriftReport(**result))
+                reports.append(DriftReportHtml(**result))
         except Exception as e:
             print(f"Error getting drift reports by model id: {e}")
         finally:
@@ -103,7 +103,7 @@ class MongoDBService(MongoDBInterface):
 
     def get_drift_reports_by_datetime_range(
         self, start: datetime, end: datetime
-    ) -> list[DriftReport]:
+    ) -> list[DriftReportHtml]:
         self.init_client()
         db = self.client[self.dbname]
         col = db[self.collection]
@@ -111,7 +111,7 @@ class MongoDBService(MongoDBInterface):
         try:
             results = col.find({"timestamp": {"$gte": start, "$lte": end}})
             for result in results:
-                reports.append(DriftReport(**result))
+                reports.append(DriftReportHtml(**result))
         except Exception as e:
             print(f"Error getting drift reports by datetime range: {e}")
         finally:
@@ -120,7 +120,7 @@ class MongoDBService(MongoDBInterface):
 
     def get_drift_reports_by_model_id_and_datetime_range(
         self, model_id: str, start: datetime, end: datetime
-    ) -> list[DriftReport]:
+    ) -> list[DriftReportHtml]:
         self.init_client()
         db = self.client[self.dbname]
         col = db[self.collection]
@@ -130,7 +130,7 @@ class MongoDBService(MongoDBInterface):
                 {"model_id": model_id, "timestamp": {"$gte": start, "$lte": end}}
             )
             for result in results:
-                reports.append(DriftReport(**result))
+                reports.append(DriftReportHtml(**result))
         except Exception as e:
             print(f"Error getting drift reports by model id and datetime range: {e}")
         finally:
@@ -145,7 +145,7 @@ class MongoDBService(MongoDBInterface):
         try:
             results = col.find()
             for result in results:
-                reports.append(DriftReport(**result))
+                reports.append(DriftReportHtml(**result))
         except Exception as e:
             print(f"Error getting all drift reports: {e}")
         finally:
@@ -205,3 +205,16 @@ class MongoDBService(MongoDBInterface):
         finally:
             self.client.close()
         return self
+
+    def get_distinct_models(self) -> list[str]:
+        self.init_client()
+        db = self.client[self.dbname]
+        col = db[self.collection]
+        model_ids = []
+        try:
+            model_ids = [doc.model_id for doc in col.distinct("model_id")]
+        except Exception as e:
+            print(f"Error deleting all drift reports: {e}")
+        finally:
+            self.client.close()
+        return model_ids

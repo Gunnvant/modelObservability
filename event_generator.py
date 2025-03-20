@@ -1,5 +1,5 @@
 from rabbitMQService.core import RabbitMQProducer
-from dataDriftService.entitites import QueueMessageFlatFiles
+from rabbitMQService.entities import QueueMessageFlatFiles
 import os
 import json
 

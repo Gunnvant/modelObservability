@@ -1,2 +1,2 @@
 #!/bin/bash
-uv run fastapi dev ./dashboardService/app/app.py
+uv run fastapi run ./dashboardService/app/app.py

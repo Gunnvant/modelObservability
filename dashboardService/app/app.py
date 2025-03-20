@@ -1,8 +1,11 @@
 from fastapi import FastAPI
-from routes import router
+from dashboardService.routes import driftRouterHtml
+
+routers = (driftRouterHtml,)
 
 app = FastAPI()
-app.include_router(router.router)
+for router in routers:
+    app.include_router(router.router)
 
 
 @app.get("/health")

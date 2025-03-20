@@ -1,6 +1,7 @@
 import sys
 import os
 
+
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
 sys.path.append(parent_dir)
 
@@ -14,9 +15,9 @@ mongo_db = os.getenv("MONGO_DB")
 mongo_collection = os.getenv("MONGO_COLLECTION")
 
 db_service = core.MongoDBService(
-    host='localhost',
+    host="localhost",
     user=None,
     password=None,
-    dbname='monitoring',
-    collection='drift',
+    dbname="monitoring",
+    collection="drift",
 )

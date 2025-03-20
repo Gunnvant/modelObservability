@@ -1,8 +1,8 @@
 import os
 from mongoDBService.core import MongoDBService
 from rabbitMQService.core import RabbitMQConsumer
+from rabbitMQService.entities import QueueMessageFlatFiles
 from dataDriftService.core import DataDriftService
-from dataDriftService.entitites import QueueMessageFlatFiles
 import pandas as pd
 import json
 
@@ -28,7 +28,7 @@ def callback(ch, method, properties, body):
         reference_data=reference_data,
         current_data=current_data,
     )
-    drift_report = drift_service.get_report()
+    drift_report = drift_service.get_report_html()
     db_service = MongoDBService(
         host=mongo_host,
         user=None,
@@ -36,12 +36,12 @@ def callback(ch, method, properties, body):
         dbname=mongo_db,
         collection=mongo_collection,
     )
-    db_service.insert_drift_report(drift_report)
+    db_service.insert_drift_report_html(drift_report)
     print(" [x] Done")
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
-class DataDriftWorker:
+class DataDriftWorkerHtmlFlatFile:
     def run(self):
         consumer = RabbitMQConsumer(
             host=host, port=port, username=user_name, password=password
