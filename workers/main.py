@@ -1,10 +1,10 @@
-import os 
+import os
 from mongoDBService.core import MongoDBService
 from rabbitMQService.core import RabbitMQConsumer
 from dataDriftService.core import DataDriftService
 from dataDriftService.entitites import QueueMessageFlatFiles
 import pandas as pd
-import json 
+import json
 
 user_name = os.getenv("RABBITMQ_USERNAME")
 password = os.getenv("RABBITMQ_PASSWORD")
@@ -16,22 +16,39 @@ mongo_db = os.getenv("MONGO_DB")
 mongo_collection = os.getenv("MONGO_COLLECTION")
 port = 5672
 
+
 def callback(ch, method, properties, body):
     message = json.loads(body.decode())
     message = QueueMessageFlatFiles(**message)
     print(f" [x] Received {message}")
     reference_data = pd.read_csv(message.reference_data_path)
     current_data = pd.read_csv(message.current_data_path)
-    drift_service = DataDriftService(model_id=message.model_id,reference_data=reference_data,current_data=current_data)
+    drift_service = DataDriftService(
+        model_id=message.model_id,
+        reference_data=reference_data,
+        current_data=current_data,
+    )
     drift_report = drift_service.get_report()
-    db_service = MongoDBService(host=mongo_host,user=None,password=None,dbname=mongo_db,collection=mongo_collection)
+    db_service = MongoDBService(
+        host=mongo_host,
+        user=None,
+        password=None,
+        dbname=mongo_db,
+        collection=mongo_collection,
+    )
     db_service.insert_drift_report(drift_report)
     print(" [x] Done")
-    ch.basic_ack(delivery_tag = method.delivery_tag)
-    
+    ch.basic_ack(delivery_tag=method.delivery_tag)
 
-class Driver():
+
+class DataDriftWorker:
     def run(self):
-        consumer = RabbitMQConsumer(host=host,port=port,username=user_name,password=password)
+        consumer = RabbitMQConsumer(
+            host=host, port=port, username=user_name, password=password
+        )
         consumer.connect_to_queue(queue_name="data_drift")
         consumer.consume(callback)
+
+
+class DataQualityWorker:
+    pass

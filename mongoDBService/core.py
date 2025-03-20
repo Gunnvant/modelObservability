@@ -45,7 +45,12 @@ class MongoDBInterface(ABC):
 
 class MongoDBService(MongoDBInterface):
     def __init__(
-        self, host: str, user: str|None, password: str|None, collection: str, dbname: str
+        self,
+        host: str,
+        user: str | None,
+        password: str | None,
+        collection: str,
+        dbname: str,
     ):
         self.host = host
         self.user = user
@@ -159,7 +164,9 @@ class MongoDBService(MongoDBInterface):
             self.client.close()
         return self
 
-    def delete_drift_reports_by_datetime_range(self, start: datetime, end: datetime) -> Self:
+    def delete_drift_reports_by_datetime_range(
+        self, start: datetime, end: datetime
+    ) -> Self:
         self.init_client()
         db = self.client[self.dbname]
         col = db[self.collection]
@@ -172,7 +179,7 @@ class MongoDBService(MongoDBInterface):
         return self
 
     def delete_drift_reports_by_model_id_and_datetime_range(
-        self, model_id: str, start: datetime, end:datetime
+        self, model_id: str, start: datetime, end: datetime
     ) -> Self:
         self.init_client()
         db = self.client[self.dbname]

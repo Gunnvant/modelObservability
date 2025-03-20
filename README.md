@@ -37,7 +37,7 @@ source .venv/bin/activate
 Then you can start the workers using the following command in separate terminal
 
 ```bash
-uv run app.py
+uv run workers.py
 ```
 
 This will start the worker that will listen to events on queue and will compute drift report and store it in  mongo db based on the signals received.
@@ -47,3 +47,15 @@ To simulate an inference event in a separate terminal run
 ```bash
 uv run event_generator.py
 ```
+
+To run the ui server run the following:
+
+```bash
+bash ./start_ui_service.sh
+```
+
+Then browse to `http://127.0.0.1:8000/driftReport/report/?model_id=model_id_you_want_to_see_report_for`
+
+You will see the drift report
+
+![](./screenshots/report.png)
