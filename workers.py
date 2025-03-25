@@ -1,4 +1,4 @@
-from workers.main import DataDriftWorkerHtmlFlatFile
+from workers.main import DataDriftWorker
 
-drift = DataDriftWorkerHtmlFlatFile()
+drift = DataDriftWorker()
 drift.run()

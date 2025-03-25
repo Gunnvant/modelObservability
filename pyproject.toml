@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
     "black>=25.1.0",
+    "duckdb>=1.2.1",
     "eval-type-backport>=0.2.2",
     "evidently>=0.6.6",
     "fastapi>=0.115.11",

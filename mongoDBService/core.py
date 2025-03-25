@@ -2,7 +2,7 @@ from __future__ import annotations
 import urllib.parse
 from pymongo import MongoClient
 from abc import ABC, abstractmethod
-from .entities import DriftReportHtml
+from .entities import MonitoringReport
 from typing_extensions import Self
 from datetime import datetime
 
@@ -68,7 +68,7 @@ class MongoDBService(MongoDBInterface):
         self.client = MongoClient(conn_string)
         return self
 
-    def insert_drift_report_html(self, report: DriftReportHtml) -> Self:
+    def insert_drift_report(self, report: MonitoringReport) -> Self:
         self.init_client()
         db = self.client[self.dbname]
         col = db[self.collection]
@@ -86,7 +86,7 @@ class MongoDBService(MongoDBInterface):
         else:
             raise Exception("Client is not initialized, can't be closed")
 
-    def get_drift_reports_by_model_id(self, model_id: str) -> list[DriftReportHtml]:
+    def get_drift_reports_by_model_id(self, model_id: str) -> list[MonitoringReport]:
         self.init_client()
         db = self.client[self.dbname]
         col = db[self.collection]
@@ -94,7 +94,7 @@ class MongoDBService(MongoDBInterface):
         try:
             results = col.find({"model_id": model_id})
             for result in results:
-                reports.append(DriftReportHtml(**result))
+                reports.append(MonitoringReport(**result))
         except Exception as e:
             print(f"Error getting drift reports by model id: {e}")
         finally:
@@ -103,7 +103,7 @@ class MongoDBService(MongoDBInterface):
 
     def get_drift_reports_by_datetime_range(
         self, start: datetime, end: datetime
-    ) -> list[DriftReportHtml]:
+    ) -> list[MonitoringReport]:
         self.init_client()
         db = self.client[self.dbname]
         col = db[self.collection]
@@ -111,7 +111,7 @@ class MongoDBService(MongoDBInterface):
         try:
             results = col.find({"timestamp": {"$gte": start, "$lte": end}})
             for result in results:
-                reports.append(DriftReportHtml(**result))
+                reports.append(MonitoringReport(**result))
         except Exception as e:
             print(f"Error getting drift reports by datetime range: {e}")
         finally:
@@ -120,7 +120,7 @@ class MongoDBService(MongoDBInterface):
 
     def get_drift_reports_by_model_id_and_datetime_range(
         self, model_id: str, start: datetime, end: datetime
-    ) -> list[DriftReportHtml]:
+    ) -> list[MonitoringReport]:
         self.init_client()
         db = self.client[self.dbname]
         col = db[self.collection]
@@ -130,7 +130,7 @@ class MongoDBService(MongoDBInterface):
                 {"model_id": model_id, "timestamp": {"$gte": start, "$lte": end}}
             )
             for result in results:
-                reports.append(DriftReportHtml(**result))
+                reports.append(MonitoringReport(**result))
         except Exception as e:
             print(f"Error getting drift reports by model id and datetime range: {e}")
         finally:
@@ -145,7 +145,7 @@ class MongoDBService(MongoDBInterface):
         try:
             results = col.find()
             for result in results:
-                reports.append(DriftReportHtml(**result))
+                reports.append(MonitoringReport(**result))
         except Exception as e:
             print(f"Error getting all drift reports: {e}")
         finally:
